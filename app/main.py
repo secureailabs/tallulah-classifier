@@ -20,6 +20,7 @@ from aio_pika.abc import AbstractIncomingMessage
 from models.common import PyObjectId
 from models.email import Emails, EmailState
 from utils.message_queue import MessageQueueClient, RabbitMQWorkQueue
+from utils.secrets import get_secret
 
 # read the environment variable form the .env file
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -66,10 +67,11 @@ async def on_email_receive(message: AbstractIncomingMessage) -> None:
 
 
 async def main():
-    mq = MessageQueueClient(RabbitMQWorkQueue())
-    await mq.connect()
-    await mq.consume_messages(on_email_receive)
-    await mq.disconnect()
+    rabbit_mq_connect_url = get_secret("rabbit_mq_host")
+    rabbit_mq_client = MessageQueueClient(RabbitMQWorkQueue(url=f"{rabbit_mq_connect_url}:5672"))
+    await rabbit_mq_client.connect()
+    await rabbit_mq_client.consume_messages(on_email_receive)
+    await rabbit_mq_client.disconnect()
 
 
 if __name__ == "__main__":
