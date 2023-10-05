@@ -16,8 +16,7 @@ from typing import Any, Dict, List, Optional
 
 import motor.motor_asyncio
 import pymongo.results as results
-
-from app.utils.secrets import get_secret
+from utils.secrets import get_secret
 
 mongodb_host = get_secret("mongodb_host")
 client = motor.motor_asyncio.AsyncIOMotorClient(f"{mongodb_host}:27017/")

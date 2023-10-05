@@ -57,15 +57,12 @@ run_image() {
     check_docker
 
     # Run the classifier image
-    docker run -it \
-    -p 8000:8000 \
-    -v $(pwd)/app:/app \
-    --env-file .env \
-    tallulah/classifier
+    docker run -it -p 8000:8000 -v $(pwd)/app:/app --env-file .env --network tallulah tallulah/classifier
 }
 
 run() {
-    uvicorn app.main:server --reload --env-file .env
+    cd app
+    python3 main.py
 }
 
 # run whatever command is passed in as arguments

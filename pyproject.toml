@@ -12,6 +12,8 @@ aio-pika = "^9.2.3"
 python-dotenv = "^1.0.0"
 pydantic = "1.10.9"
 motor = "3.2.0"
+scikit-learn = "0.23.2"
+cloudpickle = "1.6.0"
 
 
 [tool.poetry.group.dev.dependencies]

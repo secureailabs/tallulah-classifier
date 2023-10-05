@@ -17,10 +17,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
+from data import operations as data_service
+from models.common import PyObjectId, SailBaseModel
 from pydantic import EmailStr, Field, StrictStr
-
-from app.data import operations as data_service
-from app.models.common import PyObjectId, SailBaseModel
 
 
 class EmailState(Enum):
@@ -35,6 +34,7 @@ class Email_Base(SailBaseModel):
     from_address: Dict = Field()
     received_time: datetime = Field()
     mailbox_id: PyObjectId = Field()
+    tags: List[str] = Field(default_factory=list)
     note: Optional[StrictStr] = Field(default=None)
     message_state: EmailState = Field(default=EmailState.UNPROCESSED)
 
@@ -60,7 +60,7 @@ class Emails:
 
         response = await data_service.find_by_query(
             collection=Emails.DB_COLLECTION_EMAILS,
-            query=json.dumps(query),
+            query=query,
         )
 
         if response:
@@ -75,6 +75,7 @@ class Emails:
     async def update(
         query_message_id: Optional[PyObjectId] = None,
         update_message_state: Optional[EmailState] = None,
+        update_message_tags: Optional[List[str]] = None,
     ):
         query = {}
         if query_message_id:
@@ -83,11 +84,13 @@ class Emails:
         update_request = {"$set": {}}
         if update_message_state:
             update_request["$set"]["message_state"] = update_message_state.value
+        if update_message_tags:
+            update_request["$set"]["tags"] = update_message_tags
 
         update_response = await data_service.update_many(
             collection=Emails.DB_COLLECTION_EMAILS,
             query=query,
-            data=json.dumps(update_request),
+            data=update_request,
         )
 
         if update_response.modified_count == 0:
