@@ -22,8 +22,9 @@ from models.email import Emails, EmailState
 from utils.message_queue import MessageQueueClient, RabbitMQWorkQueue
 from utils.secrets import get_secret
 
-# read the environment variable form the .env file
-dotenv.load_dotenv(dotenv.find_dotenv())
+# read the environment variable form the .env file if available
+if dotenv.find_dotenv():
+    dotenv.load_dotenv(dotenv.find_dotenv())
 
 
 class EmailClassifier:
