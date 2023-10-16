@@ -17,9 +17,10 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
-from data import operations as data_service
-from models.common import PyObjectId, SailBaseModel
 from pydantic import EmailStr, Field, StrictStr
+
+from app.data import operations as data_service
+from app.models.common import PyObjectId, SailBaseModel
 
 
 class EmailState(Enum):
@@ -28,13 +29,18 @@ class EmailState(Enum):
     FAILED = "FAILED"
 
 
+class Annotation(SailBaseModel):
+    name: StrictStr = Field()
+    value: StrictStr = Field()
+
+
 class Email_Base(SailBaseModel):
     subject: StrictStr = Field()
     body: Dict = Field()
     from_address: Dict = Field()
     received_time: datetime = Field()
     mailbox_id: PyObjectId = Field()
-    tags: List[StrictStr] = Field(default=[])
+    tags: List[Annotation] = Field(default=[])
     note: Optional[StrictStr] = Field(default=None)
     message_state: EmailState = Field(default=EmailState.UNPROCESSED)
 

@@ -56,6 +56,12 @@ run_image() {
 
     check_docker
 
+    # Create a network if it doesn't exist
+    if ! docker network ls | grep -q "tallulah"; then
+        docker network create tallulah
+    fi
+
+
     # Run the classifier image
     docker run -it --rm -v $(pwd)/app:/app --name classifier --env-file .env --network tallulah tallulah/classifier
 }

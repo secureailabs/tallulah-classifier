@@ -1,10 +1,10 @@
-FROM python:3.8
+FROM python:3.11
+
+COPY tallulah_classifier /tallulah_classifier
 
 COPY requirements.txt /requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY app /app
 
-WORKDIR /app
-
-ENTRYPOINT [ "python3", "main.py" ]
+ENTRYPOINT [ "python3", "app/main.py" ]

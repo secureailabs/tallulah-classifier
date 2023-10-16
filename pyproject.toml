@@ -3,17 +3,19 @@ name = "tallulah-classifier"
 version = "0.1.0"
 description = ""
 authors = ["Prawal Gangwar <prawal@secureailabs.com>"]
-readme = "README.md"
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.11,<3.13"
+
 aiohttp = "^3.8.4"
 aio-pika = "^9.2.3"
 python-dotenv = "^1.0.0"
 pydantic = "1.10.9"
 motor = "3.2.0"
-scikit-learn = "0.23.2"
 cloudpickle = "1.6.0"
+scikit-learn = "^1.3.1"
+pandas = "^2.1.1"
 
 
 [tool.poetry.group.dev.dependencies]

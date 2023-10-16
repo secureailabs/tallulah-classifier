@@ -14,7 +14,6 @@
 
 import asyncio
 
-import cloudpickle as cpkl
 import dotenv
 from aio_pika.abc import AbstractIncomingMessage
 from models.common import PyObjectId
@@ -22,27 +21,15 @@ from models.email import Emails, EmailState
 from utils.message_queue import MessageQueueClient, RabbitMQWorkQueue
 from utils.secrets import get_secret
 
+from app.email_classifier import EmailClassifier
+
 # read the environment variable form the .env file if available
 if dotenv.find_dotenv():
     dotenv.load_dotenv(dotenv.find_dotenv())
 
 
-class EmailClassifier:
-    """The email classifier"""
-
-    def __init__(self, model_path: str):
-        f = open(model_path, "rb")
-        self.model = cpkl.load(f)
-
-    def predict_email_tags(self, message: str) -> str:
-        """Predict the tags of an email"""
-        # combine the subject and body of each email together and pass it in as text input; You can pass an array of emails
-        result = self.model.predict([message])
-        print(result[0])
-        return result[0]
-
-
-# classifier = EmailClassifier("email_model.pkl")
+classifier = EmailClassifier()
+classifier.load("email_model.pkl")
 
 
 # Connect to rabbit mq and listen for messages
@@ -55,7 +42,8 @@ async def on_email_receive(message: AbstractIncomingMessage) -> None:
         emails = await Emails.read(email_id=email_id)
 
         # tags = classifier.predict_email_tags(emails[0].subject + emails[0].body["content"])
-        tags = "test"
+
+        tags = classifier.predict_email_tags(emails[0].subject + emails[0].body["content"])
 
         # # Update the email with the tags
         await Emails.update(
