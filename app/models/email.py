@@ -17,6 +17,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
+from numpy import source
 from pydantic import EmailStr, Field, StrictStr
 
 from app.data import operations as data_service
@@ -30,8 +31,9 @@ class EmailState(Enum):
 
 
 class Annotation(SailBaseModel):
-    name: StrictStr = Field()
-    value: StrictStr = Field()
+    annotation_id: StrictStr = Field()
+    source: StrictStr = Field()
+    values: Dict[str, float] = Field()
 
 
 class Email_Base(SailBaseModel):
