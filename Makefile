@@ -6,6 +6,9 @@ run:
 build_image:
 	@./scripts.sh build_image tallulah/classifier
 
+test_image:
+	@./scripts.sh test_image tallulah/classifier
+
 run_image:
 	@./scripts.sh run_image tallulah/classifier
 
