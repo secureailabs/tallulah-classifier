@@ -1,0 +1,49 @@
+# -------------------------------------------------------------------------------
+# Engineering
+# accounts.py
+# -------------------------------------------------------------------------------
+"""Models used by account management service"""
+# -------------------------------------------------------------------------------
+# Copyright (C) 2022 Array Insights, Inc. All Rights Reserved.
+# Private and Confidential. Internal Use Only.
+#     This software contains proprietary information which shall not
+#     be reproduced or transferred to other documents and shall not
+#     be disclosed to others for any purpose without
+#     prior written permission of Array Insights, Inc.
+# -------------------------------------------------------------------------------
+
+from typing import Dict, List, Optional
+
+from app.email_dao_base import EmailDaoBase
+from app.models.common import PyObjectId
+from app.models.email import Annotation, Email_Base, Email_Db, EmailState
+
+
+class EmailDaoDict(EmailDaoBase):
+    def __init__(self):
+        self.dict_email = {}
+
+    def add(self, email_id: str, email: Email_Base):
+        email_data = email.dict()
+        email_data["_id"] = email_id
+        self.dict_email[email_id] = Email_Db(**email_data)
+
+    async def read(
+        self,
+        email_id: PyObjectId,
+        throw_on_not_found: bool = True,
+    ) -> List[Email_Db]:
+        if str(email_id) in self.dict_email:
+            return [self.dict_email[str(email_id)]]
+        if throw_on_not_found:
+            raise RuntimeError(f"Email not found for id: {email_id}")
+        else:
+            return []
+
+    async def update(
+        self,
+        query_message_id: Optional[PyObjectId] = None,
+        update_message_state: Optional[EmailState] = None,
+        update_message_annotations: Optional[List[Annotation]] = None,
+    ):
+        pass

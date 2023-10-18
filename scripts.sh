@@ -66,6 +66,22 @@ run_image() {
     docker run -it --rm -v $(pwd)/app:/app --name classifier --env-file .env --network tallulah tallulah/classifier
 }
 
+
+# Run the docker image
+test_image() {
+
+    build_image $1 
+
+    # Create a network if it doesn't exist
+    if ! docker network ls | grep -q "tallulah"; then
+        docker network create tallulah
+    fi
+
+
+    # Run the classifier image
+    docker run -it --rm -v $(pwd)/app:/app --name classifier --env-file .test_env --network tallulah tallulah/classifier
+}
+
 run() {
     cd app
     python3 main.py

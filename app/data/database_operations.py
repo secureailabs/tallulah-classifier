@@ -72,4 +72,4 @@ class DatabaseOperations:
         return await self.sail_db[collection].delete_one(query)
 
     async def drop(self):
-        return await self.client.drop_database(sail_db)
+        return await self.client.drop_database(self.sail_db)
