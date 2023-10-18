@@ -44,6 +44,6 @@ class EmailDaoDict(EmailDaoBase):
         self,
         query_message_id: Optional[PyObjectId] = None,
         update_message_state: Optional[EmailState] = None,
-        update_message_annotations: Optional[Annotation] = None,
+        update_message_annotations: Optional[List[Annotation]] = None,
     ):
         pass

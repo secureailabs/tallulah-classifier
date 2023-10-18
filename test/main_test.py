@@ -25,7 +25,6 @@ async def main():
         email_id = str(uuid4())
         email_dao.add(email_id, email)
         await message_queue.push_message(email_id)
-        break  # TODO
     email_consumer = EmailConsumer(message_queue, email_dao)
     await email_consumer.main()
 
