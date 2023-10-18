@@ -26,13 +26,15 @@ else:
 count = 0
 count_total = 0
 for email in list_email:
-    tag = classfier.predict_email_tags(email)
     # print(tag)
-    if len(email.tags) == 0:
+    if len(email.annotations) == 0:
         continue
     else:
         count_total += 1
-    if tag == list(email.tags[0].values.keys())[0]:
+
+    label_pred = list(classfier.predict_email_tags(email)[0].values.keys())[0]
+    label_true = list(email.annotations[0].values.keys())[0]
+    if label_pred == label_true:
         count += 1
 
 

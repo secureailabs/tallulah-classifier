@@ -16,22 +16,25 @@ import asyncio
 
 import dotenv
 from aio_pika.abc import AbstractIncomingMessage
-from models.common import PyObjectId
-from models.email import Emails, EmailState
-from utils.message_queue import RabbitMQWorkQueue
-from utils.secrets import get_secret
 
 from app.email_classifier import EmailClassifier
+from app.email_dao_base import EmailDaoBase
+from app.email_dao_mongo import EmailDaoMongo
+from app.models.common import PyObjectId
+from app.models.email import EmailState
+from app.utils.message_queue import MessageQueueType, RabbitMQWorkQueue
+from app.utils.secrets import get_secret
 
 
 class EmailConsumer:
-    def __init__(self):
+    def __init__(
+        self,
+        rabbit_mq_client: MessageQueueType,
+        email_dao: EmailDaoBase,
+    ):
         # read the environment variable form the .env file if available
-        if dotenv.find_dotenv():
-            dotenv.load_dotenv(dotenv.find_dotenv())
-
-        self.rabbit_mq_connect_hostname = get_secret("rabbit_mq_host")
-        self.rabbit_mq_connect_port = get_secret("rabbit_mq_port")  # 5672
+        self.rabbit_mq_client = rabbit_mq_client
+        self.email_dao = email_dao
 
         self.classifier = EmailClassifier()
         self.classifier.load("email_model.pkl")
@@ -43,31 +46,35 @@ class EmailConsumer:
             email_id = PyObjectId(message.body.decode())
 
             # # Get the email from the database
-            emails = await Emails.read(email_id=email_id)
-
-            # tags = classifier.predict_email_tags(emails[0].subject + emails[0].body["content"])
-
-            tags = self.classifier.predict_email_tags(emails[0].subject + emails[0].body["content"])
-
+            emails = await self.email_dao.read(email_id=email_id)
+            list_annotation = self.classifier.predict_email_tags(emails[0])
             # # Update the email with the tags
-            await Emails.update(
+            await self.email_dao.update(
                 query_message_id=email_id,
-                update_message_tags=[tags],
                 update_message_state=EmailState.PROCESSED,
+                update_message_annotations=list_annotation,
             )
 
             print(f"Message body is: {str(email_id)}")
 
     async def main(self):
-        rabbit_mq_client = RabbitMQWorkQueue(
-            url=f"{self.rabbit_mq_connect_hostname}:{self.rabbit_mq_connect_port}", queue_name="email_queue"
-        )
-
-        await rabbit_mq_client.connect()
-        await rabbit_mq_client.consume_messages(self.on_email_receive)
-        await rabbit_mq_client.disconnect()
+        await self.rabbit_mq_client.connect()
+        await self.rabbit_mq_client.consume_messages(self.on_email_receive)
+        await self.rabbit_mq_client.disconnect()
 
 
 if __name__ == "__main__":
-    email_consumer = EmailConsumer()
+    if dotenv.find_dotenv():
+        dotenv.load_dotenv(dotenv.find_dotenv())
+
+    email_dao = EmailDaoMongo()
+    rabbit_mq_connect_hostname = get_secret("rabbit_mq_hostname")
+    rabbit_mq_connect_port = get_secret("rabbit_mq_port")  # 5672
+    rabbit_mq_connect_queue_name = get_secret("rabbit_mq_queue_name")
+    rabbit_mq_client = RabbitMQWorkQueue(
+        url=f"{rabbit_mq_connect_hostname}:{rabbit_mq_connect_port}",
+        queue_name=rabbit_mq_connect_queue_name,
+    )
+
+    email_consumer = EmailConsumer(rabbit_mq_client, email_dao)
     asyncio.run(email_consumer.main())

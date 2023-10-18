@@ -1,8 +1,9 @@
 from typing import List
+from uuid import uuid4
 
 import cloudpickle as cpkl
 
-from app.models.email import Email_Base
+from app.models.email import Annotation, Email_Base
 from app.tfid_multinominal_nb import TfidMultinominalNb
 
 
@@ -27,16 +28,16 @@ class EmailClassifier:
         list_text = []
         list_text_label = []
         for email in list_email:
-            if 0 < len(email.tags):
+            if 0 < len(email.annotations):
                 text = email.body["content"]
-                label = list(email.tags[0].values.keys())[0]
+                label = list(email.annotations[0].values.keys())[0]
                 list_text.append(text)
                 list_text_label.append(label)
 
         self.model.fit(list_text, list_text_label)
         self.is_loaded = True
 
-    def predict_email_tags(self, email: Email_Base) -> str:
+    def predict_email_tags(self, email: Email_Base) -> List[Annotation]:
         """Predict the tags of an email"""
         if not self.is_loaded:
             raise ValueError("Please load the model first")
@@ -45,4 +46,9 @@ class EmailClassifier:
         content = email.body["content"]
         dict_result = self.model.predict(content)
         tag_predicted = max(dict_result, key=dict_result.get)
-        return tag_predicted
+        annotation = Annotation(
+            annotation_id=str(uuid4()),
+            source="TfidMultinominalNb",
+            values={tag_predicted: 1.0},
+        )
+        return [annotation]

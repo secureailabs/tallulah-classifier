@@ -46,9 +46,9 @@ def read_emails() -> List[Email_Base]:
             continue
         received_time: datetime = datetime.strptime(row["Date"], "%Y-%m-%d %H:%M:%S")
         mailbox_id: PyObjectId = PyObjectId()
-        tags = []
+        annotations = []
         if 0 < len(row["Tags"].strip()):
-            tags.append(
+            annotations.append(
                 Annotation(
                     annotation_id=str(uuid4()),
                     source="csv",
@@ -61,7 +61,7 @@ def read_emails() -> List[Email_Base]:
             "from_address": from_address,
             "received_time": received_time,
             "mailbox_id": mailbox_id,
-            "tags": tags,
+            "annotations": annotations,
         }
         email = Email_Base(**dict_data)
         list_email.append(email)
