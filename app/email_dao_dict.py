@@ -13,6 +13,7 @@
 # -------------------------------------------------------------------------------
 
 from typing import Dict, List, Optional
+from uuid import uuid4
 
 from app.email_dao_base import EmailDaoBase
 from app.models.common import PyObjectId
@@ -23,10 +24,16 @@ class EmailDaoDict(EmailDaoBase):
     def __init__(self):
         self.dict_email = {}
 
-    def add(self, email_id: str, email: Email_Base):
+    async def create(
+        self,
+        email: Email_Base,
+    ) -> str:
+        email_id = str(uuid4())
         email_data = email.dict()
         email_data["_id"] = email_id
+
         self.dict_email[email_id] = Email_Db(**email_data)
+        return email_id
 
     async def read(
         self,

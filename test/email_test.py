@@ -45,7 +45,7 @@ def read_emails() -> List[Email_Base]:
         if len(body["content"].strip()) == 0:
             continue
         received_time: datetime = datetime.strptime(row["Date"], "%Y-%m-%d %H:%M:%S")
-        mailbox_id: PyObjectId = PyObjectId()
+        mailbox_id: str = str(uuid4())
         annotations = []
         if 0 < len(row["Tags"].strip()):
             annotations.append(

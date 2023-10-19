@@ -2,12 +2,19 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from app.models.common import PyObjectId
-from app.models.email import Annotation, Email_Db, EmailState
+from app.models.email import Annotation, Email_Base, Email_Db, EmailState
 
 
 class EmailDaoBase(ABC):
     def __init__(self):
         pass
+
+    @abstractmethod
+    async def create(
+        self,
+        email: Email_Base,
+    ) -> str:
+        raise NotImplementedError()
 
     @abstractmethod
     async def read(

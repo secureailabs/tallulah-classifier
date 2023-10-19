@@ -22,8 +22,7 @@ async def main():
     await message_queue.connect()
 
     for email in list_email:
-        email_id = str(uuid4())
-        email_dao.add(email_id, email)
+        email_id = await email_dao.create(email)
         await message_queue.push_message(email_id)
     email_consumer = EmailConsumer(message_queue, email_dao)
     await email_consumer.main()

@@ -17,17 +17,13 @@ from typing import Any, Dict, List, Optional
 import motor.motor_asyncio
 import pymongo.results as results
 
-from app.utils.secrets import get_secret
-
 
 class DatabaseOperations:
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(DatabaseOperations, cls).__new__(cls)
-            cls.mongodb_host = get_secret("mongodb_host")
-            cls.client = motor.motor_asyncio.AsyncIOMotorClient(f"{cls.mongodb_host}:27017/")
-            cls.sail_db = cls.client["tallulah"]
-        return cls._instance
+    def __init__(self, hostname: str, port: str, database_name: str):
+        self.mongodb_hostname = hostname
+        self.mongodb_port = port
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(f"{self.mongodb_hostname}:{self.mongodb_port}/")
+        self.sail_db = self.client[database_name]
 
     async def find_one(self, collection, query) -> Optional[dict]:
         return await self.sail_db[collection].find_one(query)
