@@ -4,8 +4,6 @@ from uuid import uuid4
 from email_test import read_emails
 
 from app.email_dao_mongo import EmailDaoMongo
-from app.models.common import PyObjectId
-from app.models.email import Annotation
 
 
 async def main():
@@ -13,3 +11,14 @@ async def main():
 
     await email_dao.delete_all()
     result = await email_dao.read_all()
+    if 0 < len(result):
+        raise Exception("Should be empty")
+    list_email = read_emails(filter_no_body=False)
+    for email in list_email:
+        await email_dao.create(email)
+    result = await email_dao.read_all()
+    print(len(result))
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

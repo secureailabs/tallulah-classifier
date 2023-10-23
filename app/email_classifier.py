@@ -47,8 +47,8 @@ class EmailClassifier:
         dict_result = self.model.predict(content)
         tag_predicted = max(dict_result, key=dict_result.get)
         annotation = Annotation(
-            annotation_id=str(uuid4()),
             source="TfidMultinominalNb",
-            values={tag_predicted: 1.0},
+            label=tag_predicted,
+            label_scores={tag_predicted: 1.0},
         )
         return [annotation]

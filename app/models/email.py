@@ -31,7 +31,8 @@ class EmailState(Enum):
 class Annotation(SailBaseModel):
     annotation_id: PyObjectId = Field(default_factory=PyObjectId)
     source: StrictStr = Field()
-    values: Dict[str, float] = Field()
+    label: StrictStr = Field()
+    label_scores: Dict[str, float] = Field()
 
 
 class Email_Base(SailBaseModel):

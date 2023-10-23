@@ -23,10 +23,10 @@ async def main():
     email_id = result[0].id
     result = await email_dao.read(email_id)
     print(len(result.annotations))
-    await email_dao.add_annotation(email_id, Annotation(source="test", values={"test": 0.5}))
+    await email_dao.add_annotation(email_id, Annotation(source="test", label="test", label_scores={"test": 0.5}))
     result = await email_dao.read(email_id)
     print(len(result.annotations))
-    await email_dao.add_annotation(email_id, Annotation(source="test2", values={"test": 0.5}))
+    await email_dao.add_annotation(email_id, Annotation(source="test2", label="test", label_scores={"test": 0.5}))
     result = await email_dao.read(email_id)
     print(len(result.annotations))
     await email_dao.delete_all()
