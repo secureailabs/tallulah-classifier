@@ -12,30 +12,43 @@
 #     prior written permission of Array Insights, Inc.
 # -------------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import motor.motor_asyncio
 import pymongo.results as results
+from motor.core import AgnosticCursor
 
-from app.utils.secrets import get_secret
+from app.models.email import Email_Db
 
 
 class DatabaseOperations:
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(DatabaseOperations, cls).__new__(cls)
-            cls.mongodb_host = get_secret("mongodb_host")
-            cls.client = motor.motor_asyncio.AsyncIOMotorClient(f"{cls.mongodb_host}:27017/")
-            cls.sail_db = cls.client["tallulah"]
-        return cls._instance
+    def __init__(self, hostname: str, port: str, database_name: str):
+        self.mongodb_hostname = hostname
+        self.mongodb_port = port
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(f"{self.mongodb_hostname}:{self.mongodb_port}/")
+        self.sail_db = self.client[database_name]
 
     async def find_one(self, collection, query) -> Optional[dict]:
         return await self.sail_db[collection].find_one(query)
 
-    async def find_all(self, collection: str) -> list:
-        return await self.sail_db[collection].find().to_list(1000)
+    async def find_many(
+        self, collection: str, *, batch_size=1000, cursor: Optional[AgnosticCursor] = None
+    ) -> Tuple[AgnosticCursor, List[Email_Db]]:
+        if cursor is None:
+            cursor = self.sail_db[collection].find()
+        elif not cursor.alive:
+            raise Exception("Cursor is not alive")
 
-    async def find_sorted(self, collection: str, query: Dict, sort_key: str, sort_direction: int) -> list:
+        return cursor, await cursor.to_list(batch_size)
+
+    async def find_all(self, collection: str, *, batch_size=1000) -> List[Email_Db]:
+        cursor = self.sail_db[collection].find()
+        list_all = []
+        while cursor.alive:
+            list_all.extend(await cursor.to_list(batch_size))
+        return list_all
+
+    async def find_sorted(self, collection: str, query: Dict, sort_key: str, sort_direction: int) -> List[Email_Db]:
         return await self.sail_db[collection].find(query).sort(sort_key, sort_direction).to_list(1000)
 
     async def find_sorted_pagination(

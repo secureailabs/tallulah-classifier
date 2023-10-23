@@ -11,7 +11,7 @@ from app.models.common import PyObjectId
 from app.models.email import Annotation, Email_Base
 
 
-def read_emails() -> List[Email_Base]:
+def read_emails(filter_no_body=True) -> List[Email_Base]:
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -42,17 +42,18 @@ def read_emails() -> List[Email_Base]:
             continue
         if len(row["Date"].strip()) == 0:
             continue
-        if len(body["content"].strip()) == 0:
-            continue
+        if filter_no_body:
+            if len(body["content"].strip()) == 0:
+                continue
         received_time: datetime = datetime.strptime(row["Date"], "%Y-%m-%d %H:%M:%S")
-        mailbox_id: PyObjectId = PyObjectId()
+        mailbox_id: str = str(uuid4())
         annotations = []
         if 0 < len(row["Tags"].strip()):
             annotations.append(
                 Annotation(
-                    annotation_id=str(uuid4()),
                     source="csv",
-                    values={row["Tags"]: 1.0},
+                    label=row["Tags"],
+                    label_scores={row["Tags"]: 1.0},
                 )
             )
         dict_data = {

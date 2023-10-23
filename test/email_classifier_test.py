@@ -32,8 +32,8 @@ for email in list_email:
     else:
         count_total += 1
 
-    label_pred = list(classfier.predict_email_tags(email)[0].values.keys())[0]
-    label_true = list(email.annotations[0].values.keys())[0]
+    label_pred = classfier.predict_email_tags(email)[0].label
+    label_true = email.annotations[0].label
     if label_pred == label_true:
         count += 1
 
