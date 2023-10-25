@@ -1,9 +1,10 @@
+import asyncio
 import os
 
 import dotenv
 from email_test import read_emails
 
-from app.email_classifier import EmailClassifier
+from app.email_classifier_tfid import EmailClassifierTfid
 
 if dotenv.find_dotenv():
     dotenv.load_dotenv(dotenv.find_dotenv())
@@ -16,7 +17,7 @@ path_file_model = os.path.join(path_dir_model_cache, "email_model.pkl")
 list_email = read_emails()
 
 
-classfier = EmailClassifier()
+classfier = EmailClassifierTfid()
 if os.path.isfile(path_file_model):
     classfier.load(path_file_model)
 else:
@@ -39,3 +40,6 @@ for email in list_email:
 
 
 print(f"accuracy: {count/count_total}")
+
+
+# asyncio.run(main())

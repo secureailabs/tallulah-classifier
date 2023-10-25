@@ -118,6 +118,9 @@ class EmailDaoMongo(EmailDaoBase):
         annotation: Annotation,
     ):
         email = await self.read(email_id=email_id)
+        # remove any existing annotation with the same source
+        email.annotations = [a for a in email.annotations if a.source != annotation.source]
+
         query = {}
         if email_id:
             query["_id"] = str(email_id)
