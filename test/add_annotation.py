@@ -3,14 +3,8 @@ import random
 import sys
 from typing import List
 
-from certifi import contents
-
 from app.email_dao_mongo import EmailDaoMongo
 from app.models.email import Annotation, Email_Db
-
-
-def add_label(email, label: str):
-    pass
 
 
 def print_email(email: Email_Db):

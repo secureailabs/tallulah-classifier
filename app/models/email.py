@@ -45,6 +45,12 @@ class Email_Base(SailBaseModel):
     note: Optional[StrictStr] = Field(default=None)
     message_state: EmailState = Field(default=EmailState.UNPROCESSED)
 
+    def get_annotation(self, source: str) -> Optional[Annotation]:
+        for annotation in self.annotations:
+            if annotation.source == source:
+                return annotation
+        return None
+
 
 class Email_Db(Email_Base):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")

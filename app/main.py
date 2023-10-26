@@ -17,7 +17,7 @@ import asyncio
 import dotenv
 from aio_pika.abc import AbstractIncomingMessage
 
-from app.email_classifier import EmailClassifier
+from app.email_classifier_tfid import EmailClassifierTfid
 from app.email_dao_base import EmailDaoBase
 from app.email_dao_mongo import EmailDaoMongo
 from app.models.common import PyObjectId
@@ -36,7 +36,7 @@ class EmailConsumer:
         self.rabbit_mq_client = rabbit_mq_client
         self.email_dao = email_dao
 
-        self.classifier = EmailClassifier()
+        self.classifier = EmailClassifierTfid()
         self.classifier.load("email_model.pkl")
 
     # Connect to rabbit mq and listen for messages
@@ -66,8 +66,11 @@ class EmailConsumer:
 if __name__ == "__main__":
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
-
-    email_dao = EmailDaoMongo()
+    mongodb_hostname = get_secret("mongodb_hostname")
+    mongodb_port = get_secret("mongodb_port")
+    mongodb_database_name = get_secret("mongodb_database_name")
+    mongodb_collection_name = get_secret("mongodb_collection_name")
+    email_dao = EmailDaoMongo(mongodb_hostname, mongodb_port, mongodb_database_name, mongodb_collection_name)
     rabbit_mq_connect_hostname = get_secret("rabbit_mq_hostname")
     rabbit_mq_connect_port = get_secret("rabbit_mq_port")  # 5672
     rabbit_mq_connect_queue_name = get_secret("rabbit_mq_queue_name")
