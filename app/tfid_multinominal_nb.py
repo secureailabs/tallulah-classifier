@@ -9,7 +9,7 @@ class TfidMultinominalNb:
     def __init__(self, max_features: int = 1000):
         self.encoder = TfidfVectorizer(max_features=max_features)  # You can adjust the number of features
         self.classifier = MultinomialNB()
-        self.list_label = None
+        self.list_label: List[str] = []
         self.dict_label: Dict[str, int] = {}
         self.dict_score_multiplier: Dict[str, float] = {}
 
@@ -18,7 +18,7 @@ class TfidMultinominalNb:
     ):
         X_transformed = self.encoder.fit_transform(list_text)
         self.classifier.fit(X_transformed, list_text_label)
-        self.list_label = self.classifier.classes_
+        self.list_label = self.classifier.classes_  # type: ignore
         self.dict_label = {}
         for i, label in enumerate(self.list_label):
             self.dict_label[label] = i

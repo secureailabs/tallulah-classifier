@@ -3,12 +3,10 @@ from typing import Dict
 from uuid import uuid4
 
 import dotenv
-from aio_pika.abc import AbstractIncomingMessage
 from email_test import read_emails
 
 from app.email_dao_dict import EmailDaoDict
 from app.main import EmailConsumer
-from app.models.email import Email_Base
 from app.utils.message_queue import RabbitMQWorkQueue
 
 

@@ -20,10 +20,8 @@ async def main():
         classfier.load(path_file_model)
 
     for email in list_email:
-        if email.get_annotation("csv") is not None:
-            list_annotation = classfier.predict_email_tags(email)
-            for annotation in list_annotation:
-                await email_dao.add_annotation(email.id, annotation)
+        annotation = classfier.predict_email_tags(email)[0]
+        await email_dao.add_annotation(email.id, annotation)
 
 
 if __name__ == "__main__":
