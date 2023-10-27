@@ -7,7 +7,7 @@ from app.email_dao_mongo import EmailDaoMongo
 
 
 async def main():
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1", "27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
 
     await email_dao.delete_all()
     result = await email_dao.read_all()

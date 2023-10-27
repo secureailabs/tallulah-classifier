@@ -44,7 +44,7 @@ async def main():
         print("Please provide a annotation_source to add annotations to")
         exit(1)
     annotation_source = sys.argv[1]
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1", "27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
     list_result = await email_dao.read_all()
     list_label = [
         "General Breasties",

@@ -12,7 +12,7 @@ async def main():
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
 
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1", "27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
     list_email = await email_dao.read_all()
     path_file_model = get_secret("path_file_model")
     classfier = EmailClassifierTfid()

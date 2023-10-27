@@ -66,11 +66,11 @@ class EmailConsumer:
 if __name__ == "__main__":
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
-    mongodb_hostname = get_secret("mongodb_hostname")
-    mongodb_port = get_secret("mongodb_port")
-    mongodb_database_name = get_secret("mongodb_database_name")
+    mongodb_connection_string = get_secret("mongo_connection_url")
+    mongodb_database_name = get_secret("mongo_db_name")
     mongodb_collection_name = get_secret("mongodb_collection_name")
-    email_dao = EmailDaoMongo(mongodb_hostname, mongodb_port, mongodb_database_name, mongodb_collection_name)
+    email_dao = EmailDaoMongo(mongodb_connection_string, mongodb_database_name, mongodb_collection_name)
+
     rabbit_mq_connect_hostname = get_secret("rabbit_mq_hostname")
     rabbit_mq_connect_port = get_secret("rabbit_mq_port")  # 5672
     rabbit_mq_connect_queue_name = get_secret("rabbit_mq_queue_name")

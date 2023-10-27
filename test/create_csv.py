@@ -13,7 +13,7 @@ async def main():
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
 
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1", "27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
     list_email_db = await email_dao.read_all()
     dict_source = {}
     for email in list_email_db:
@@ -30,8 +30,7 @@ async def main():
     list_message = []
     for email in list_email_db:
         list_id.append(email.body["id"])
-        received_time = email.received_time
-        list_date.append(received_time.strftime("%Y-%m-%d %H:%M:%S"))
+        list_date.append(email.received_time)
         list_name.append(list(email.from_address.values())[0])
         list_email.append(list(email.from_address.keys())[0])
 

@@ -22,10 +22,8 @@ from app.models.email import Email_Db
 
 
 class DatabaseOperations:
-    def __init__(self, hostname: str, port: str, database_name: str):
-        self.mongodb_hostname = hostname
-        self.mongodb_port = port
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(f"{self.mongodb_hostname}:{self.mongodb_port}/")
+    def __init__(self, mongo_connection_string: str, database_name: str):
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(mongo_connection_string)
         self.sail_db = self.client[database_name]
 
     async def find_one(self, collection, query) -> Optional[dict]:
