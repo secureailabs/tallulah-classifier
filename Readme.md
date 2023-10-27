@@ -5,3 +5,11 @@ docker run -d --rm --name mongo -p 27017:27017 --network tallulah mongo:6.0
 
 # start main_test
 python test/main_test.py
+
+
+# start local app
+docker run -it --rm --name classifier --env-file .env --network tallulah tallulah/classifier
+
+
+# start with hack
+docker run -it --rm -v /c/project/tallulah-classifier/app:/app --name classifier --env-file .env --network tallulah tallulah/classifier

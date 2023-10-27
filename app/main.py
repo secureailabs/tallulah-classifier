@@ -13,9 +13,12 @@
 # -------------------------------------------------------------------------------
 
 import asyncio
+import subprocess
 
 import dotenv
 from aio_pika.abc import AbstractIncomingMessage
+
+print(subprocess.run("pip list", shell=True))
 
 from app.email_classifier_tfid import EmailClassifierTfid
 from app.email_dao_base import EmailDaoBase
@@ -66,8 +69,8 @@ class EmailConsumer:
 if __name__ == "__main__":
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
-    mongodb_connection_string = get_secret("mongo_connection_url")
-    mongodb_database_name = get_secret("mongo_db_name")
+    mongodb_connection_string = get_secret("mongodb_connection_url")
+    mongodb_database_name = get_secret("mongodb_database_name")
     mongodb_collection_name = get_secret("mongodb_collection_name")
     email_dao = EmailDaoMongo(mongodb_connection_string, mongodb_database_name, mongodb_collection_name)
 
