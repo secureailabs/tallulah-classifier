@@ -21,7 +21,7 @@ class EmailDaoBase(ABC):
         self,
         email_id: PyObjectId,
         throw_on_not_found: bool = True,
-    ) -> List[Email_Db]:
+    ) -> Optional[Email_Db]:
         raise NotImplementedError()
 
     @abstractmethod

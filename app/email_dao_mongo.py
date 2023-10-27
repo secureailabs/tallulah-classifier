@@ -52,7 +52,7 @@ class EmailDaoMongo(EmailDaoBase):
         self,
         email_id: PyObjectId,
         throw_on_not_found: bool = True,
-    ) -> Email_Db:
+    ) -> Optional[Email_Db]:
         messages_list = []
 
         query = {}
@@ -70,7 +70,10 @@ class EmailDaoMongo(EmailDaoBase):
         elif throw_on_not_found:
             raise Exception(f"No messages found for query: {query}")
 
-        return messages_list[0]
+        if 0 < len(messages_list):
+            return messages_list[0]
+        else:
+            return None
 
     async def read_all(
         self,

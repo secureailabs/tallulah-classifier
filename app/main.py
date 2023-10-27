@@ -49,8 +49,8 @@ class EmailConsumer:
             email_id = PyObjectId(message.body.decode())
 
             # # Get the email from the database
-            emails = await self.email_dao.read(email_id=email_id)
-            list_annotation = self.classifier.predict_email_tags(emails[0])
+            email = await self.email_dao.read(email_id=email_id)
+            list_annotation = self.classifier.predict_email_tags(email)
             # # Update the email with the tags
             await self.email_dao.update(
                 query_message_id=email_id,

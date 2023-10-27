@@ -39,13 +39,13 @@ class EmailDaoDict(EmailDaoBase):
         self,
         email_id: PyObjectId,
         throw_on_not_found: bool = True,
-    ) -> List[Email_Db]:
+    ) -> Optional[Email_Db]:
         if str(email_id) in self.dict_email:
-            return [self.dict_email[str(email_id)]]
+            return self.dict_email[str(email_id)]
         if throw_on_not_found:
             raise RuntimeError(f"Email not found for id: {email_id}")
         else:
-            return []
+            return None
 
     async def update(
         self,
