@@ -52,7 +52,7 @@ class EmailDaoMongo(EmailDaoBase):
         self,
         email_id: PyObjectId,
         throw_on_not_found: bool = True,
-    ) -> Email_Db:
+    ) -> List[Email_Db]:
         messages_list = []
 
         query = {}
@@ -70,7 +70,7 @@ class EmailDaoMongo(EmailDaoBase):
         elif throw_on_not_found:
             raise Exception(f"No messages found for query: {query}")
 
-        return messages_list[0]
+        return messages_list
 
     async def read_all(
         self,
@@ -83,7 +83,7 @@ class EmailDaoMongo(EmailDaoBase):
 
         if response:
             for data_model in response:
-                messages_list.append(Email_Db(**data_model))
+                messages_list.append(data_model)
 
         return messages_list
 
@@ -101,12 +101,12 @@ class EmailDaoMongo(EmailDaoBase):
         if update_message_state:
             update_request["$set"]["message_state"] = update_message_state.value
         if update_message_annotations:
-            update_request["$set"]["tags"] = update_message_annotations
+            update_request["$set"]["annotations"] = update_message_annotations
 
         update_response = await self.database_operations.update_many(
             collection=self.collection_name,
             query=query,
-            data=update_request,
+            data=jsonable_encoder(update_request),
         )
 
         if update_response.modified_count == 0:
@@ -118,6 +118,7 @@ class EmailDaoMongo(EmailDaoBase):
         annotation: Annotation,
     ):
         email = await self.read(email_id=email_id)
+        email = email[0]
         # remove any existing annotation with the same source
         email.annotations = [a for a in email.annotations if a.source != annotation.source]
 
