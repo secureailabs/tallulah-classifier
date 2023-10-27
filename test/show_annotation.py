@@ -7,7 +7,7 @@ from app.models.email import Annotation
 
 
 async def main():
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1", "27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
     list_email = await email_dao.read_all()
     dict_annotation: Dict[str, List[Annotation]] = {}
     for email in list_email:
