@@ -41,7 +41,6 @@ class EmailClassifierTfid:
                 if 0 < len(text.strip()):
                     list_text.append(text)
                     list_text_label.append(label)
-
         self.model.fit(list_text, list_text_label, dict_score_multiplier)
         self.is_loaded = True
 

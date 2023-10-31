@@ -18,13 +18,12 @@ async def main():
 
     path_file_model = get_secret("path_file_model")
     dict_score_multiplier = {
-        "General Breasties": 0.9,
-        "General Info": 0.5,
-        "In a trial": 1.0,
-        "Interested in a trial": 1.0,
-        "Newly Diagnosed": 1.0,
-        "Partners": 1.5,
-        "Recent Reccurance": 1.0,
+        "General Breasties": 1.1,
+        "General Info": 0.75,
+        "In a trial": 1.1,
+        "Interested in a trial": 1.2,
+        "Newly Diagnosed": 1.6,
+        "Partners": 2.1,
     }
 
     classfier = EmailClassifierTfid(40)
