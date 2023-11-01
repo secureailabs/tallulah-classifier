@@ -83,7 +83,7 @@ class EmailDaoMongo(EmailDaoBase):
 
         if response:
             for data_model in response:
-                messages_list.append(data_model)
+                messages_list.append(Email_Db(**data_model))
 
         return messages_list
 
