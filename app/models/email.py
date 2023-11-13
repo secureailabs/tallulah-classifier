@@ -23,8 +23,9 @@ from app.models.common import PyObjectId, SailBaseModel
 
 
 class EmailState(Enum):
-    UNPROCESSED = "UNPROCESSED"
-    PROCESSED = "PROCESSED"
+    NEW = "NEW"
+    TAGGED = "TAGGED"
+    RESPONDED = "RESPONDED"
     FAILED = "FAILED"
 
 
@@ -41,9 +42,11 @@ class Email_Base(SailBaseModel):
     from_address: Dict = Field()
     received_time: str = Field()
     mailbox_id: PyObjectId = Field()
+    user_id: PyObjectId = Field()
     annotations: List[Annotation] = Field(default=[])
     note: Optional[StrictStr] = Field(default=None)
-    message_state: EmailState = Field(default=EmailState.UNPROCESSED)
+    message_state: EmailState = Field(default=EmailState.NEW)
+    outlook_id: StrictStr = Field()
 
     def get_annotation(self, source: str) -> Optional[Annotation]:
         for annotation in self.annotations:

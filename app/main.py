@@ -51,7 +51,7 @@ class EmailConsumer:
             # # Update the email with the tags
             await self.email_dao.update(
                 query_message_id=email_id,
-                update_message_state=EmailState.PROCESSED,
+                update_message_state=EmailState.TAGGED,
                 update_message_annotations=list_annotation,
             )
 
@@ -66,14 +66,14 @@ class EmailConsumer:
 if __name__ == "__main__":
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
-    mongodb_connection_string = get_secret("mongo_connection_url")
-    mongodb_database_name = get_secret("mongo_db_name")
-    mongodb_collection_name = get_secret("mongodb_collection_name")
+    mongodb_connection_string = get_secret("MONGO_CONNECTION_URL")
+    mongodb_database_name = get_secret("MONGO_DB_NAME")
+    mongodb_collection_name = get_secret("MONGODB_COLLECTION_NAME")
     email_dao = EmailDaoMongo(mongodb_connection_string, mongodb_database_name, mongodb_collection_name)
 
-    rabbit_mq_connect_hostname = get_secret("rabbit_mq_hostname")
-    rabbit_mq_connect_port = get_secret("rabbit_mq_port")  # 5672
-    rabbit_mq_connect_queue_name = get_secret("rabbit_mq_queue_name")
+    rabbit_mq_connect_hostname = get_secret("RABBIT_MQ_HOSTNAME")
+    rabbit_mq_connect_port = get_secret("RABBIT_MQ_PORT")  # 5672
+    rabbit_mq_connect_queue_name = get_secret("RABBIT_MQ_QUEUE_NAME")
     rabbit_mq_client = RabbitMQWorkQueue(
         url=f"{rabbit_mq_connect_hostname}:{rabbit_mq_connect_port}",
         queue_name=rabbit_mq_connect_queue_name,

@@ -35,7 +35,7 @@ class EmailClassifierTfid:
         list_text_label = []
         for email in list_email:
             annotation_selected = email.get_annotation(annotation_source)
-            if annotation_selected is not None:
+            if annotation_selected is not None and email.body is not None:
                 text = email.body["content"]
                 label = annotation_selected.label
                 if 0 < len(text.strip()):
@@ -53,6 +53,9 @@ class EmailClassifierTfid:
             raise ValueError("Please load the model first")
         # combine the subject and body of each email together and pass it in as text input; You can pass an array of emails
 
+        if email.body is None:
+            raise ValueError("Email body is None")
+
         content = email.body["content"]
 
         dict_result = self.model.predict(content)
@@ -61,7 +64,7 @@ class EmailClassifierTfid:
                 dict_result[key] = 0.0
             dict_result["General Info"] = 1.0
 
-        tag_predicted = max(dict_result, key=dict_result.get)
+        tag_predicted = max(dict_result, key=dict_result.get)  # type: ignore
         annotation = Annotation(
             source=self.model_type,
             label=tag_predicted,
