@@ -9,6 +9,9 @@ from app.models.email import Annotation, Email_Db
 
 def print_email(email: Email_Db):
     print(f"\n\n\nfrom_address: \n{list(email.from_address.keys())[0]}")
+    if not email.body:
+        print(f"body: \nNo body")
+        return
     content = email.body["content"]
     if 0 < len(content):
         print(f"body: \n{content}")

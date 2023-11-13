@@ -39,6 +39,8 @@ class EmailDaoMongo(EmailDaoBase):
             from_address=email.from_address,
             message_state=email.message_state,
             annotations=email.annotations,
+            outlook_id=email.outlook_id,
+            user_id=email.user_id,
         )
         response = await self.database_operations.insert_one(
             collection=self.collection_name,
@@ -82,8 +84,8 @@ class EmailDaoMongo(EmailDaoBase):
         )
 
         if response:
-            for data_model in response:
-                messages_list.append(Email_Db(**data_model))
+            for email in response:
+                messages_list.append(email)
 
         return messages_list
 
