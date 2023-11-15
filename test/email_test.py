@@ -34,6 +34,7 @@ def read_emails_for_file(name_file: str, filter_no_body=True) -> List[Email_Base
         body["phone"] = row["Phone"]
         body["status"] = row["Status"]
         body["id"] = row["Id"]
+
         from_address: Dict = {row["Email"]: row["Name"]}
         if row["Date"].strip() == "Date":
             continue
@@ -71,6 +72,8 @@ def read_emails_for_file(name_file: str, filter_no_body=True) -> List[Email_Base
             "received_time": received_time,
             "mailbox_id": mailbox_id,
             "annotations": annotations,
+            "user_id": mailbox_id,
+            "outlook_id": mailbox_id,
         }
         email = Email_Base(**dict_data)
         list_email.append(email)
