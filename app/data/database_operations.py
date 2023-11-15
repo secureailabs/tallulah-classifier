@@ -44,6 +44,10 @@ class DatabaseOperations:
         list_all = []
         while cursor.alive:
             list_all.extend(await cursor.to_list(batch_size))
+        list_all_email_db = []
+        for email_dict in list_all:
+            list_all_email_db.append(Email_Db(**email_dict))
+
         return list_all
 
     async def find_sorted(self, collection: str, query: Dict, sort_key: str, sort_direction: int) -> List[Email_Db]:
