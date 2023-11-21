@@ -14,7 +14,7 @@ class TfidMultinominalNb:
         self.dict_score_multiplier: Dict[str, float] = {}
 
     def fit(
-        self, list_text: List[str], list_text_label: List[str], dict_score_multiplier: Optional[Dict[str, float]] = None
+        self, list_text: List[str], list_text_label: List[str], dict_score_multiplier: Optional[Dict[str, float]] = {}
     ):
         X_transformed = self.encoder.fit_transform(list_text)
         self.classifier.fit(X_transformed, list_text_label)

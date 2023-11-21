@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import cloudpickle as cpkl
 
-from app.models.email import Annotation, Email_Base
+from app.models.email import Annotation, Email_Base, Email_Db
 from app.tfid_multinominal_nb import TfidMultinominalNb
 
 
@@ -26,9 +26,9 @@ class EmailClassifierTfid:
 
     def fit(
         self,
-        list_email: List[Email_Base],
+        list_email: List[Email_Db],
         annotation_source: str,
-        dict_score_multiplier: Optional[Dict[str, float]] = None,
+        dict_score_multiplier: Optional[Dict[str, float]] = {},
     ):
         self.model = TfidMultinominalNb(self.max_features)
         list_text = []

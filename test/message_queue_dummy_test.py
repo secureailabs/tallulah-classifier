@@ -6,9 +6,13 @@ from app.utils.message_queue import RabbitMQWorkQueue
 
 
 async def on_message(message: AbstractIncomingMessage) -> None:
+    message_count = 0
     async with message.process(ignore_processed=True):
         await asyncio.sleep(message.body.count(b"."))
         print(f"     Message body is: {message.body!r}")
+        message_count += 1
+        if message_count == 2:
+            return
 
 
 async def main():

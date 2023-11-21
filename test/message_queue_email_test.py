@@ -2,8 +2,8 @@ import asyncio
 from typing import Dict
 
 from aio_pika.abc import AbstractIncomingMessage
-from email_test import read_emails
 
+from app.email_dao_mongo import EmailDaoMongo
 from app.models.email import Email_Base
 from app.utils.message_queue import RabbitMQWorkQueue
 
@@ -20,9 +20,10 @@ async def on_message(message: AbstractIncomingMessage) -> None:
 
 
 async def main():
+    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
     mq = RabbitMQWorkQueue("amqp://guest:guest@localhost/", "test_queue_dummy")
     await mq.connect()
-    list_email = read_emails()
+    list_email = await email_dao.read_all()
 
     for email in list_email:
         dict_email[email.body["id"]] = email
