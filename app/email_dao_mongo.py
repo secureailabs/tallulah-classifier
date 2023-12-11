@@ -103,6 +103,7 @@ class EmailDaoMongo(EmailDaoBase):
         if update_message_state:
             update_request["$set"]["message_state"] = update_message_state.value
         if update_message_annotations:
+            update_request["$set"]["label"] = update_message_annotations[0].label
             update_request["$set"]["annotations"] = update_message_annotations
 
         update_response = await self.database_operations.update_many(
@@ -131,8 +132,7 @@ class EmailDaoMongo(EmailDaoBase):
         update_request = {"$set": {}}
 
         # Update the display label it's not already set
-        if email.label is None:
-            update_request["$set"]["label"] = annotation.label
+        update_request["$set"]["label"] = annotation.label
         update_request["$set"]["annotations"] = email.annotations
         update_request["$set"]["annotations"].append(annotation)
         update_response = await self.database_operations.update_many(
