@@ -84,8 +84,8 @@ class EmailDaoMongo(EmailDaoBase):
         )
 
         if response:
-            for data_model in response:
-                messages_list.append(Email_Db(**data_model))
+            for email in response:
+                messages_list.append(email)
 
         return messages_list
 
@@ -130,6 +130,9 @@ class EmailDaoMongo(EmailDaoBase):
 
         update_request = {"$set": {}}
 
+        # Update the display label it's not already set
+        if email.label is None:
+            update_request["$set"]["label"] = annotation.label
         update_request["$set"]["annotations"] = email.annotations
         update_request["$set"]["annotations"].append(annotation)
         update_response = await self.database_operations.update_many(

@@ -30,7 +30,7 @@ class EmailState(Enum):
 
 
 class Annotation(SailBaseModel):
-    annotation_id: PyObjectId = Field(default_factory=PyObjectId)
+    id: PyObjectId = Field(default_factory=PyObjectId)
     source: StrictStr = Field()
     label: StrictStr = Field()
     label_scores: Dict[str, float] = Field()
@@ -43,6 +43,7 @@ class Email_Base(SailBaseModel):
     received_time: str = Field()
     mailbox_id: PyObjectId = Field()
     user_id: PyObjectId = Field()
+    label: Optional[StrictStr] = Field(default=None)
     annotations: List[Annotation] = Field(default=[])
     note: Optional[StrictStr] = Field(default=None)
     message_state: EmailState = Field(default=EmailState.NEW)
