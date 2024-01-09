@@ -2,7 +2,7 @@ import abc
 import asyncio
 from typing import Callable
 
-from aio_pika import DeliveryMode, Message, connect
+from aio_pika import DeliveryMode, Message, connect_robust
 
 
 class MessageQueueType(abc.ABC):
@@ -30,7 +30,8 @@ class RabbitMQWorkQueue(MessageQueueType):
         self.is_initialized = False
 
     async def connect(self):
-        self.connection = await connect(self.url)
+        print(f"Connecting to rabbitmq on {self.url}...")
+        self.connection = await connect_robust(self.url)
         self.channel = await self.connection.channel()
         self.queue = await self.channel.declare_queue(self.queue_name, durable=True)
         self.is_initialized = True
