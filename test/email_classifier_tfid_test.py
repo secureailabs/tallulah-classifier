@@ -9,7 +9,7 @@ from app.email_dao_mongo import EmailDaoMongo
 
 async def main():
     """Test the email classifier"""
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("emails_temp")
 
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())

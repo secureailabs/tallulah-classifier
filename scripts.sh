@@ -16,6 +16,7 @@ check_docker() {
 push_image_to_registry() {
     # check docker installed
     check_docker
+    az login
 
     # check if the DOCKER_REGISTRY_NAME is set
     if [ -z "$DOCKER_REGISTRY_NAME" ]; then
@@ -24,7 +25,6 @@ push_image_to_registry() {
     fi
 
     echo "login to azure account"
-    az login --service-principal --username $AZURE_CLIENT_ID --password $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
     az account set --subscription $AZURE_SUBSCRIPTION_ID
 
     echo "log in to azure registry"

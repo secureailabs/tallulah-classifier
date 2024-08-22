@@ -23,8 +23,8 @@ from app.models.email import Annotation, Email_Base, Email_Db, EmailState
 
 
 class EmailDaoMongo(EmailDaoBase):
-    def __init__(self, connection_string, database_name: str, collection_name: str):
-        self.database_operations = DatabaseOperations(connection_string, database_name)
+    def __init__(self, collection_name: str):
+        self.database_operations = DatabaseOperations()
         self.collection_name = collection_name
 
     async def create(

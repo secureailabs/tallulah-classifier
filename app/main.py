@@ -64,12 +64,13 @@ class EmailConsumer:
 
 
 if __name__ == "__main__":
+
+    print("Starting the email consumer service")
+
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
-    mongodb_connection_string = get_secret("MONGO_CONNECTION_URL")
-    mongodb_database_name = get_secret("MONGO_DB_NAME")
     mongodb_collection_name = get_secret("MONGODB_COLLECTION_NAME")
-    email_dao = EmailDaoMongo(mongodb_connection_string, mongodb_database_name, mongodb_collection_name)
+    email_dao = EmailDaoMongo(mongodb_collection_name)
 
     rabbit_mq_connect_hostname = get_secret("RABBIT_MQ_HOSTNAME")
     rabbit_mq_connect_port = get_secret("RABBIT_MQ_PORT")  # 5672

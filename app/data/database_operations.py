@@ -12,19 +12,42 @@
 #     prior written permission of Array Insights, Inc.
 # -------------------------------------------------------------------------------
 
+import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import motor.motor_asyncio
 import pymongo.results as results
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 from motor.core import AgnosticCursor
+from pymongo.server_api import ServerApi
 
 from app.models.email import Email_Db
+from app.utils.secrets import get_secret
 
 
 class DatabaseOperations:
-    def __init__(self, mongo_connection_string: str, database_name: str):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(mongo_connection_string)
-        self.sail_db = self.client[database_name]
+    def __new__(cls):
+        if cls._instance is None:
+            # write the certificate to a tmp file
+            with open("/tmp/mongo_atlas_cert.pem", "w") as f:
+                credential = DefaultAzureCredential()
+                client = SecretClient(vault_url=get_secret("DEVOPS_KEYVAULT_URL"), credential=credential)
+                secret = client.get_secret("mongo-connection-certificate")
+                if not secret.value:
+                    raise Exception("Could not retrieve the secret")
+                f.write(secret.value)
+
+            cls._instance = super(DatabaseOperations, cls).__new__(cls)
+            cls.mongodb_host = get_secret("MONGO_CONNECTION_URL")
+            cls.client = motor.motor_asyncio.AsyncIOMotorClient(
+                cls.mongodb_host, tls=True, tlsCertificateKeyFile="/tmp/mongo_atlas_cert.pem", server_api=ServerApi("1")
+            )
+            cls.sail_db = cls.client[get_secret("MONGO_DB_NAME")]
+
+            # remove the certificate
+            os.remove("/tmp/mongo_atlas_cert.pem")
+        return cls._instance
 
     async def find_one(self, collection, query) -> Optional[dict]:
         return await self.sail_db[collection].find_one(query)
@@ -37,7 +60,7 @@ class DatabaseOperations:
         elif not cursor.alive:
             raise Exception("Cursor is not alive")
 
-        return cursor, await cursor.to_list(batch_size)
+        return cursor, await cursor.to_list(batch_size)  # type: ignore
 
     async def find_all(self, collection: str, *, batch_size=1000) -> List[Email_Db]:
         cursor = self.sail_db[collection].find()

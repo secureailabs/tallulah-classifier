@@ -14,7 +14,7 @@ async def main():
     if dotenv.find_dotenv():
         dotenv.load_dotenv(dotenv.find_dotenv())
 
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("emails_temp")
     message_queue = RabbitMQWorkQueue("amqp://guest:guest@localhost/", "test_queue_dummy")
     await message_queue.connect()
 

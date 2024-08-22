@@ -8,7 +8,7 @@ from app.models.email import Annotation, Email_Base, EmailState
 
 async def main():
     # Initialize an instance of EmailDaoMongo for MongoDB connection
-    email_dao = EmailDaoMongo("mongodb://127.0.0.1:27017", "tallulah", "emails_temp")
+    email_dao = EmailDaoMongo("emails_temp")
 
     # Delete all existing emails in the database
     await email_dao.delete_all()
