@@ -63,7 +63,7 @@ run_image() {
 
 
     # Run the classifier image
-    docker run -it --rm -v $(pwd)/app:/app --name classifier --env-file .env --network tallulah tallulah/classifier
+    docker run -it --rm -v $(pwd)/app:/app --name classifier --env-file .env --network tallulah tallulah/classifier --platform linux/amd64
 }
 
 

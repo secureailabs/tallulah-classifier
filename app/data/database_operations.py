@@ -27,6 +27,8 @@ from app.utils.secrets import get_secret
 
 
 class DatabaseOperations:
+    _instance = None
+
     def __new__(cls):
         if cls._instance is None:
             # write the certificate to a tmp file
